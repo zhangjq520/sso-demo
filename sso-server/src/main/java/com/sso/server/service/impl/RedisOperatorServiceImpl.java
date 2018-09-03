@@ -1,86 +1,63 @@
 package com.sso.server.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.sso.server.entity.TokenSession;
 import com.sso.server.service.RedisOperatorService;
+import com.sso.server.service.RedisService;
 
 @Service
 public class RedisOperatorServiceImpl implements RedisOperatorService{
 	
+	private final static int EXPRIRETIME = 60;
+	
 	@Autowired
-	private RedisTemplate<String,String> redisTemplate;
+	private RedisService redisService;
 	
-	public static final String USER_KEY = "userMap";
-	
-	public static final String TOKEN_KEY = "tokenMap";
-
 	@Override
-	public void putUserInfo(String userName, String token) {
-		HashOperations<String, String, String> hashUserOp = redisTemplate.opsForHash();
-		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
-		redisSerializer = new StringRedisSerializer();
-		//redisSerializer = new Jackson2JsonRedisSerializer<>(TokenSession.class);
-		redisTemplate.setHashValueSerializer(redisSerializer);
-		hashUserOp.put(USER_KEY,userName,token);
+	public void putUserInfo(String userName, String token, int expireTime) {
+		redisService.set(userName, token);
+		if (expireTime<=0) {
+			expireTime = EXPRIRETIME;
+		}
+		redisService.expire(userName, expireTime);
 	}
 	
 	@Override
 	public void deleteUserInfo(String userName) {
-		HashOperations<String, String, String> hashUserOp = redisTemplate.opsForHash();
-		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
-		redisSerializer = new StringRedisSerializer();
-		//redisSerializer = new Jackson2JsonRedisSerializer<>(TokenSession.class);
-		redisTemplate.setHashValueSerializer(redisSerializer);
-		hashUserOp.delete(USER_KEY,userName);
+		redisService.remove(userName);
 	}
 
 	@Override
-	public void putTokenInfo(String tokenKey, TokenSession tokenSession) {
-		HashOperations<String, String, TokenSession> hashTokenOp = redisTemplate.opsForHash();
-		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
-		redisSerializer = new JdkSerializationRedisSerializer();
-		//redisSerializer = new Jackson2JsonRedisSerializer<>(TokenSession.class);
-		redisTemplate.setHashValueSerializer(redisSerializer);
-		hashTokenOp.put(TOKEN_KEY,tokenKey,tokenSession);
+	public void putTokenInfo(String tokenKey, TokenSession tokenSession, int expireTime) {
+		redisService.set(tokenKey, JSON.toJSON(tokenSession).toString());
+		if (expireTime<=0) {
+			expireTime = EXPRIRETIME;
+		}
+		redisService.expire(tokenKey, expireTime);
 		
 	}
 	
 	@Override
 	public void deleteTokenInfo(String tokenKey) {
-		HashOperations<String, String, TokenSession> hashTokenOp = redisTemplate.opsForHash();
-		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
-		redisSerializer = new JdkSerializationRedisSerializer();
-		//redisSerializer = new Jackson2JsonRedisSerializer<>(TokenSession.class);
-		redisTemplate.setHashValueSerializer(redisSerializer);
-		hashTokenOp.delete(TOKEN_KEY,tokenKey);
+		redisService.remove(tokenKey);
 		
 	}
 
 	@Override
 	public String getUserInfo(String userName) {
-		HashOperations<String, String, String> hashUserOp = redisTemplate.opsForHash();
-		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
-		redisSerializer = new StringRedisSerializer();
-		//redisSerializer = new Jackson2JsonRedisSerializer<>(TokenSession.class);
-		redisTemplate.setHashValueSerializer(redisSerializer);
-		return hashUserOp.get(USER_KEY, userName); 
+		return redisService.get(userName); 
 	}
 
 	@Override
 	public TokenSession getTokenInfo(String tokenKey) {
-		HashOperations<String, String, TokenSession> hashTokenOp = redisTemplate.opsForHash();
-		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
-		redisSerializer = new JdkSerializationRedisSerializer();
-		//redisSerializer = new Jackson2JsonRedisSerializer<>(TokenSession.class);
-		redisTemplate.setHashValueSerializer(redisSerializer);
-		return hashTokenOp.get(TOKEN_KEY,tokenKey);
+		String tem = redisService.get(tokenKey);
+		if (null==tem||"".equals(tem)) {
+			return null;
+		}
+		return JSON.parseObject(tem, TokenSession.class);
 	}
 
 }

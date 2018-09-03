@@ -4,9 +4,9 @@ import com.sso.server.entity.TokenSession;
 
 public interface RedisOperatorService {
 	
-	void putUserInfo(String userName, String token);
+	void putUserInfo(String userName, String token, int expireTime);
 	
-	void putTokenInfo(String tokenKey, TokenSession tokenSession);
+	void putTokenInfo(String tokenKey, TokenSession tokenSession, int expireTime);
 	
 	String getUserInfo(String userName);
 	

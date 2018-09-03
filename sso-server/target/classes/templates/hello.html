@@ -5,23 +5,16 @@
 <title>Welcome.</title>
 </head>
 <body>
-    <p th:text="'Hello！, ' + ${ssoUser} + '!, Login Success!'" >UserName</p>
-    <div id="sp"></div>
+    <p th:text="'Hello！, ' + ${helloName} + '!, Login Success!'" >UserName</p>
+    <div id="sp">
+    	<p>请选择你需要进入的系统</p>
+    	<p><a href="http://dc1.poc.com:9001/hello?ssoUser=admin">系统一</a> </p>
+    	<p><a href="http://dc2.poc.com:9002/hello?ssoUser=admin">系统二</a> </p>
+    </div>
 </body>
 
 <script th:inline="javascript">
-	onload = function(){
-		setInterval(go,1000);
-	};
-	var x = 3;
-	function go(){
-		x--;
-		if(x>0){
-			document.getElementById('sp').innerHTML = x;
-		}else{
-			var returnUrl = [[${originalUrl}]];
-			location.href = returnUrl;
-		}
-	}
+	/* var returnUrl = [[${originalUrl}]];
+	ocation.href = returnUrl; */
 </script>
 </html>

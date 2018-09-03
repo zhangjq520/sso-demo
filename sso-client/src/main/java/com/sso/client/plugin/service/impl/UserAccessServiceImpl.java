@@ -1,48 +1,37 @@
 package com.sso.client.plugin.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import com.sso.client.plugin.service.RedisService;
 import com.sso.client.plugin.service.UserAccessService;
 
 @Service
 public class UserAccessServiceImpl implements UserAccessService{
 	
-	public static final String USER_KEY = "userMap";
-	
-	public static final String TOKEN_KEY = "tokenMap";
-	
-	public static final String TOKEN = "TOKEN";
-	
+	private final static int EXPRIRETIME = 60;
 	
 	@Autowired
-	private RedisTemplate<String,String> redisTemplate;
+	private RedisService redisService;
 
 	@Override
 	public String getUserToken(String user) {
-		HashOperations<String, String, String> hashOp = redisTemplate.opsForHash();
-		String token = hashOp.get(USER_KEY, user);
+		String token = redisService.get(user);
 		if(token==null) {
 			return null;
-		}else {
-			return TOKEN.equals(hashOp.get(TOKEN_KEY, token)) ? token : null;
 		}
+		return token;
 	}
 
 	@Override
 	public void putUserStatus(String user, String ssoToken) {
-		HashOperations<String, String, String> hashOp = redisTemplate.opsForHash();
-		hashOp.put(USER_KEY,user,ssoToken);
-		hashOp.put(TOKEN_KEY,ssoToken,TOKEN);
+		redisService.set(user, ssoToken);
+		redisService.expire(user, EXPRIRETIME);
 	}
 	
 	@Override
 	public void deleteToken(String token) {
-		HashOperations<String, String, String> hashOp = redisTemplate.opsForHash();
-		hashOp.delete(TOKEN_KEY,token);		
+		redisService.remove(token);
 	}
 
 }

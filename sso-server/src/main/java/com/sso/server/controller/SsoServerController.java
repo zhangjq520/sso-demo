@@ -84,19 +84,22 @@ public class SsoServerController {
 			String userName, String password, String originalUrl) {
 		if(authSessionService.verify(userName,password)) {
 			String token = authSessionService.cacheSession(userName);
-			if(tokenTrans(request,originalUrl,userName,token)) {
-				//跳转到提示成功的页面
-				request.setAttribute("helloName", userName);
-				if(originalUrl!=null) {
-					if(originalUrl.contains("?")) {
-						originalUrl = originalUrl + "&ssoUser="+userName;
-					}else {
-						originalUrl = originalUrl + "?ssoUser="+userName;
+			request.setAttribute("helloName", userName);
+			if (null!=originalUrl&&!"".equals(originalUrl)) {
+				if(tokenTrans(request,originalUrl,userName,token)) {
+					//跳转到提示成功的页面
+					if(originalUrl!=null) {
+						if(originalUrl.contains("?")) {
+							originalUrl = originalUrl + "&ssoUser="+userName;
+						}else {
+							originalUrl = originalUrl + "?ssoUser="+userName;
+						}
+						request.setAttribute("originalUrl", originalUrl);
 					}
-					request.setAttribute("originalUrl", originalUrl);
-					CookieUtil.addCookie(response, "zjqLoginMark", userName, 5);
 				}
 			}
+			//登录十分钟
+			CookieUtil.addCookie(response, "zjqLoginMark", userName, 1);
 			return "hello";//TO-DO 三秒跳转
 		}
 		//验证不通过，重新来吧

@@ -24,9 +24,9 @@ public class AuthSessionServiceImpl implements AuthSessionService{
 	public String cacheSession(String userName) {
 		//创建token
 		String token = UUID.randomUUID().toString();
-		redisOperatorService.putUserInfo(userName, token);
+		redisOperatorService.putUserInfo(userName, token, 60);
 		TokenSession tokenSession = new TokenSession(token,userName); 
-		redisOperatorService.putTokenInfo(token, tokenSession);
+		redisOperatorService.putTokenInfo(token, tokenSession, 60);
 		return token;
 	}
 
@@ -36,7 +36,7 @@ public class AuthSessionServiceImpl implements AuthSessionService{
 		if(tokenSession!=null) {
 			tokenSession.getAddressList().add(address);
 			tokenSession.setTokenFlag(true);
-			redisOperatorService.putTokenInfo(token, tokenSession);
+			redisOperatorService.putTokenInfo(token, tokenSession, 60);
 			return true;
 		}
 		return false;
