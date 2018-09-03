@@ -1,0 +1,19 @@
+server:
+  port: 9001
+spring:
+  redis:
+    database: 11
+    port: 6379
+    host: localhost
+    pool:
+      max-idle: 8
+      min-idle: 0
+      max-active: 8
+      max-wait: -1
+  application:
+    name: sso-mock-app1
+sso:
+  server:
+    url: http://dc1.poc.com:9003
+  client:
+    protect: /hello
