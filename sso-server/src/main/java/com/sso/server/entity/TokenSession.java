@@ -18,6 +18,8 @@ public class TokenSession implements Serializable{
 	
 	private List<String> addressList;
 	
+	private String sonSystemCode;
+	
 	public TokenSession(String token,String userName) {
 		this.userName = userName;
 		this.token=token;
@@ -69,7 +71,13 @@ public class TokenSession implements Serializable{
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
-	
+
+	public String getSonSystemCode() {
+		return sonSystemCode;
+	}
+
+	public void setSonSystemCode(String sonSystemCode) {
+		this.sonSystemCode = sonSystemCode;
+	}
 
 }

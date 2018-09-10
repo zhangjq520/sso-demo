@@ -4,20 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.sso.core.plugin.service.RedisService;
 import com.sso.server.entity.TokenSession;
 import com.sso.server.service.RedisOperatorService;
-import com.sso.server.service.RedisService;
 
 @Service
 public class RedisOperatorServiceImpl implements RedisOperatorService{
 	
-	private final static int EXPRIRETIME = 60;
+	private final static long EXPRIRETIME = 600;
 	
 	@Autowired
 	private RedisService redisService;
 	
 	@Override
-	public void putUserInfo(String userName, String token, int expireTime) {
+	public void putUserInfo(String userName, String token, long expireTime) {
 		redisService.set(userName, token);
 		if (expireTime<=0) {
 			expireTime = EXPRIRETIME;
@@ -31,7 +31,7 @@ public class RedisOperatorServiceImpl implements RedisOperatorService{
 	}
 
 	@Override
-	public void putTokenInfo(String tokenKey, TokenSession tokenSession, int expireTime) {
+	public void putTokenInfo(String tokenKey, TokenSession tokenSession, long expireTime) {
 		redisService.set(tokenKey, JSON.toJSON(tokenSession).toString());
 		if (expireTime<=0) {
 			expireTime = EXPRIRETIME;

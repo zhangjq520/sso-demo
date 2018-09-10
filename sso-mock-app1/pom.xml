@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>yejingtao.demo.springcloud</groupId>
+  <groupId>zjq.demo.springboot</groupId>
   <artifactId>sso-mock-app1</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -22,8 +22,13 @@
 
 	<dependencies>
 		<dependency>
-            <groupId>yejingtao.demo.springcloud</groupId>
+            <groupId>zjq.demo.springboot</groupId>
             <artifactId>sso-client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>zjq.demo.springboot</groupId>
+            <artifactId>sso-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 		<dependency>

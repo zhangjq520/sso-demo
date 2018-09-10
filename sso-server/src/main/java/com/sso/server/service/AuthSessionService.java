@@ -2,6 +2,8 @@ package com.sso.server.service;
 
 import java.util.List;
 
+import com.sso.core.plugin.model.ResultUser;
+
 public interface AuthSessionService {
 	
 	/**
@@ -15,8 +17,11 @@ public interface AuthSessionService {
 	//创建全局会话，返回令牌
 	String cacheSession(String userName);
 	
+	//查询token信息
+	ResultUser selectToken(String ssoToken, String sonSystemCode, String delTokenAddress);
+	
 	//判断令牌是否有效，如有效则添加地址
-	boolean checkAndAddAddress(String token,String address);
+	String varifySsoToken(String ssoToken);
 	
 	//验证用户是否登陆
 	boolean checkUserLoginStatus(String userName,String address);

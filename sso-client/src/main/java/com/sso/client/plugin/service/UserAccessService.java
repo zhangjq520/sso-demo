@@ -4,7 +4,7 @@ public interface UserAccessService {
 	
 	String getUserToken(String user);
 	
-	void putUserStatus(String user, String flag);
+	String putUserStatus(String user, String flag);
 	
-	void deleteToken(String user);
+	void deleteToken(String ssoToken, String username);
 }

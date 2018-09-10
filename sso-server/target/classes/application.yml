@@ -12,3 +12,6 @@ spring:
       max-wait: -1
   application:
     name: sso-server
+redis:
+  expire:
+    time: 600

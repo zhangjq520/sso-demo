@@ -1,6 +1,7 @@
 package com.sso.client.plugin.controller;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -32,7 +33,7 @@ public class SsoClientController {
 			String returnUrl = ssoServerPath+"/varifyToken?address="+realUrlUrls+"&token="+ssoToken;
 			//http://peer2:8089/varifyToken?address=peer1:8088&token=c2ce29be-5adb-4aaf-82cc-2ba24330176e
 			String resultStr =  restTemplate.getForObject(returnUrl, String.class);
-			if("true".equals(resultStr)) {
+			if("success".equals(resultStr)) {
 				//创建局部会话，保存用户状态为已登陆
 				userAccessService.putUserStatus(userName, ssoToken);
 				return "success";
@@ -54,8 +55,8 @@ public class SsoClientController {
 	
 	@RequestMapping("/ssoDeleteToken")
 	@ResponseBody
-	public String ssoDeleteToken(String ssoToken) {
-		userAccessService.deleteToken(ssoToken);
+	public String ssoDeleteToken(String ssoToken, String username) {
+		userAccessService.deleteToken(ssoToken, username);
 		return "success";
 	}
 }

@@ -21,7 +21,7 @@ import com.sso.client.plugin.service.UserAccessService;
 
 //判断没有登陆就跳转到sso认证中心
 @Order(1)
-@WebFilter(filterName = "ssoFilter", urlPatterns = "/hello", initParams ={@WebInitParam(name ="EXCLUDED_PAGES" , value = "/receiveToken,/ssoLogout,/ssoDeleteToken")})
+@WebFilter(filterName = "ssoFilter", urlPatterns = "/hello", initParams ={@WebInitParam(name ="EXCLUDED_PAGES" , value = "/receiveToken,/ssoLogout,/ssoDeleteToken,/login")})
 public class CommonAuthFilter implements Filter {
 	
 	@Autowired
@@ -32,6 +32,9 @@ public class CommonAuthFilter implements Filter {
 	
 	@Value("${sso.server.url}")
 	String ssoServerPath;
+	
+	@Value("${sso.client.login}")
+	String ssoLogin;
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -47,10 +50,11 @@ public class CommonAuthFilter implements Filter {
 			throws IOException, ServletException {
 		//判断当前用户是否已经登录
 		HttpServletRequest req = (HttpServletRequest) request;
-		Object userName = req.getParameter("ssoUser");
-		if(userName!=null 
-				&& String.valueOf(userName).trim().length()>0 
-				&& userAccessService.getUserToken(userName.toString())!=null) {
+		String token = req.getParameter("token");
+		if(token!=null 
+				&& String.valueOf(token).trim().length()>0 
+				&& userAccessService.getUserToken(token)!=null) {
+			request.setAttribute("username", token);
 			chain.doFilter(req, response);
 		}else {
 			boolean containtFlag = false;
@@ -68,8 +72,8 @@ public class CommonAuthFilter implements Filter {
 			}else {
 				//其他情况都丢给SSO中心去处理
 				 HttpServletResponse httpResponse = (HttpServletResponse)response;
-				 String originalUrl = req.getRequestURL().toString();
-				 httpResponse.sendRedirect(ssoServerPath+"/index?originalUrl="+originalUrl+"&ssoUser="+userName);
+//				 String originalUrl = "http://dc1.poc.com:9001/login";
+				 httpResponse.sendRedirect(ssoServerPath+"/index?originalUrl="+ssoLogin);
 			}
 		}
 	}

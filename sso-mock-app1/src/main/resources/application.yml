@@ -14,6 +14,10 @@ spring:
     name: sso-mock-app1
 sso:
   server:
-    url: http://dc1.poc.com:9003
+    url: http://dc3.poc.com:9003
   client:
-    protect: /hello
+    login: http://dc1.poc.com:9001/login
+    logout: http://dc1.poc.com:9001/ssoDeleteToken
+redis: 
+  expire: 
+    time: 600

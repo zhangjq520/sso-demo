@@ -6,6 +6,7 @@
 <title>SSO登录平台</title>
 </head>
 <body>
+	<div style="background-color: green; text-align: center;">
 		<form th:action="@{/doLogin}" method="post">
 				<label> SSO登录 </label>
 					<input type="hidden" name="originalUrl" th:value="${originalUrl}" />
@@ -21,6 +22,7 @@
 						<input type="submit" value="登录" />
 					</div>
 		</form>
+	</div>
 </body>
 </html>
 
