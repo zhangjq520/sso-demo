@@ -19,6 +19,11 @@
 						</label>
 					</div>
 					<div>
+						<label> 验证码 : <input type="text" name="code" id="code"/>
+						<img style="height: 22px;" id="codeImg" onclick="this.src='verifycode?'+Math.random()" alt="点击更换" title="点击更换" src="http://localhost:9003/verifycode" />
+						</label>
+					</div>
+					<div>
 						<input type="submit" value="登录" />
 					</div>
 		</form>

@@ -1,10 +1,17 @@
 package com.sso.server.controller;
 
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -158,5 +165,70 @@ public class SsoServerController {
 		}catch(Exception e) {
 			//Log and do nothing
 		}
+	}
+	
+	/**
+	 * 生成验证码
+	 * @param request  Http请求
+	 * @param response Http响应
+	 * @param session  Http会话
+	 */
+	@RequestMapping(value="/verifycode")
+	public void verifyCode(HttpServletRequest request, HttpServletResponse response,HttpSession session){
+	    try {
+	        int width = 60;
+	        int height = 30;
+	        Random random = new Random();
+	        //设置response头信息
+	        //禁止浏览器缓存
+	        response.setHeader("Pragma", "No-cache");
+	        response.setHeader("Cache-Control","no-cache");
+	        response.setDateHeader("Expires",0);            
+	        BufferedImage image = new BufferedImage(width, height,1);//生成缓冲区image类
+
+	        Graphics graphics = image.getGraphics();//产生image类的Graphics用于绘制操作
+	        //Graphics类的样式
+	        graphics.setColor(this.getRandColor(10,255));
+	        graphics.setFont(new Font("Times New Roman",0,28));
+	        graphics.fillRect(0, 0, width, height);         
+	        for(int i=0;i<40;i++){//绘制干扰线
+	            graphics.setColor(this.getRandColor(100,200));
+	            int x = random.nextInt(width);
+	            int y = random.nextInt(height);
+	            int x1 = random.nextInt(12);
+	            int y1 = random.nextInt(12);
+	            graphics.drawLine(x, y, x + x1, y + y1);
+	        }
+	        //绘制字符
+	        String verifycode = "";
+	        for(int i=0;i<4;i++){
+	            String rand = String.valueOf(random.nextInt(10));
+	            verifycode = verifycode + rand;
+	            graphics.setColor(new Color(20+random.nextInt(110),20+random.nextInt(110),20+random.nextInt(110)));
+	            graphics.drawString(rand,12*i+6, 26);
+	        }
+	        System.out.println("当前: "+verifycode);
+	        session.setAttribute("VerifyCode", verifycode);//将字符保存到session中用于前端的验证
+	        graphics.dispose();
+	        ImageIO.write(image,"JPEG", response.getOutputStream());
+	        response.getOutputStream().flush();         
+	    } catch (Exception e) {
+	        throw new RuntimeException();
+	    } 
+
+	}
+	
+	/**
+	 * 随机颜色
+	 * @param bcolor 开始颜色值
+	 * @param ecolor 结束颜色值
+	 * @return
+	 */
+	private Color getRandColor(int bcolor,int ecolor){
+	    Random random = new Random();
+	    int r = bcolor + random.nextInt(ecolor - bcolor);
+	    int g = bcolor + random.nextInt(ecolor - bcolor);
+	    int b = bcolor + random.nextInt(ecolor - bcolor);
+	    return new Color(r,g,b);
 	}
 }
